@@ -36,25 +36,12 @@ from .utils import resource_filename
 import sys
 sys.path.insert(0, '/mnt/users/pasi/swiftnav/libsettings/python')
 
-from settings import Settings
-
-SETTINGS_REVERT_TIMEOUT = 5
+from settings import Settings, settings_write_res_e
 
 if ETSConfig.toolkit != 'null':
     from enable.savage.trait_defs.ui.svg_button import SVGButton
 else:
     SVGButton = dict
-
-
-@unique
-class SBP_WRITE_STATUS(IntEnum):
-    TIMED_OUT = -1
-    VALUE_REJECTED = 1
-    SETTING_REJECTED = 2
-    PARSE_FAILED = 3
-    READ_ONLY = 4
-    MODIFY_DISABLED = 5
-    SERVICE_FAILED = 6
 
 
 class SettingBase(HasTraits):
@@ -81,10 +68,13 @@ class Setting(SettingBase):
     traits_view = View(
         VGroup(
             Item('full_name', label='Name', style='readonly'),
-            Item('value', editor=TextEditor(auto_set=False, enter_set=True),
+            Item('value',
+                 editor=TextEditor(auto_set=False, enter_set=True),
                  visible_when='confirmed_set and not readonly'),
-            Item('value', style='readonly',
-                 visible_when='not confirmed_set or readonly', editor=TextEditor(readonly_allow_selection=True)),
+            Item('value',
+                 style='readonly',
+                 visible_when='not confirmed_set or readonly',
+                 editor=TextEditor(readonly_allow_selection=True)),
             Item('units', style='readonly'),
             UItem('default_value',
                   style='readonly',
@@ -138,7 +128,7 @@ class Setting(SettingBase):
         if readonly:
             self.readonly = True
 
-    def revert_to_prior_value(self, name, old, new, error_value=SBP_WRITE_STATUS.TIMED_OUT):
+    def revert_to_prior_value(self, name, old, new, error_value=settings_write_res_e.SETTINGS_WR_TIMEOUT):
         '''Revert setting to old value in the case we can't confirm new value'''
 
         if self.readonly:
@@ -150,7 +140,7 @@ class Setting(SettingBase):
         invalid_setting_prompt = prompt.CallbackPrompt(
             title="Settings Write Error",
             actions=[prompt.close_button], )
-        if error_value == SBP_WRITE_STATUS.TIMED_OUT:
+        if error_value == settings_write_res_e.SETTINGS_WR_TIMEOUT:
             invalid_setting_prompt.text = \
                 ("\n   Unable to confirm that {0} was set to {1}.\n"
                  "   Message timed out.\n"
@@ -160,27 +150,27 @@ class Setting(SettingBase):
             invalid_setting_prompt.text = \
                 ("\n   Unable to set {0} to {1}.\n")
 
-        if error_value == SBP_WRITE_STATUS.VALUE_REJECTED:
+        if error_value == settings_write_res_e.SETTINGS_WR_VALUE_REJECTED:
             invalid_setting_prompt.text += \
                 ("   Ensure the range and formatting of the entry are correct.\n"
                  "   Error Value: {2}")
-        elif error_value == SBP_WRITE_STATUS.SETTING_REJECTED:
+        elif error_value == settings_write_res_e.SETTINGS_WR_SETTING_REJECTED:
             invalid_setting_prompt.text += \
                 ("   {0} is not a valid setting.\n"
                  "   Error Value: {2}")
-        elif error_value == SBP_WRITE_STATUS.PARSE_FAILED:
+        elif error_value == settings_write_res_e.SETTINGS_WR_PARSE_FAILED:
             invalid_setting_prompt.text += \
                 ("   Could not parse value: {1}.\n"
                  "   Error Value: {2}")
-        elif error_value == SBP_WRITE_STATUS.READ_ONLY:
+        elif error_value == settings_write_res_e.SETTINGS_WR_READ_ONLY:
             invalid_setting_prompt.text += \
                 ("   {0} is read-only.\n"
                  "   Error Value: {2}")
-        elif error_value == SBP_WRITE_STATUS.MODIFY_DISABLED:
+        elif error_value == settings_write_res_e.SETTINGS_WR_MODIFY_DISABLED:
             invalid_setting_prompt.text += \
                 ("   Modifying {0} is currently disabled.\n"
                  "   Error Value: {2}")
-        elif error_value == SBP_WRITE_STATUS.SERVICE_FAILED:
+        elif error_value == settings_write_res_e.SETTINGS_WR_SERVICE_FAILED:
             invalid_setting_prompt.text += \
                 ("   Service failed while changing setting. See logs.\n"
                  "   Error Value: {2}")
@@ -198,7 +188,7 @@ class Setting(SettingBase):
                 self.value = self.value.encode('ascii', 'replace')
             self.confirmed_set = False
             res = self.settings.s_api.write(self.section, self.name, new)
-            if res == 0:
+            if res == settings_write_res_e.SETTINGS_WR_OK:
                 self.value = new
             else:
                 self.revert_to_prior_value(self.name, old, new, res)
@@ -409,7 +399,7 @@ class SettingsView(HasTraits):
 
     def _expert_changed(self, info):
         try:
-            self.settings_display_setup(do_read_finished=False)
+            self.settings_display_setup(finish=False)
         except AttributeError:
             pass
 
@@ -454,10 +444,10 @@ class SettingsView(HasTraits):
                 callback=self.update_required_smoothpose_settings)
             confirm_prompt.settings_list = settings_list
             confirm_prompt.text = "\n\n" \
-                                  "    In order to enable INS output, it is necessary to enable and configure the imu.    \n" \
-                                  "    Your current settings indicate that your imu raw ouptut is disabled and/or improperly configured.    \n\n" \
-                                  "    Choose \"Update\" to allow the console to change the following settings on your device to help enable INS output.    \n" \
-                                  "    Choose \"Close\" to ignore this recommendation and not update any device settings.    \n\n"
+                "    In order to enable INS output, it is necessary to enable and configure the imu.    \n" \
+                "    Your current settings indicate that your imu raw ouptut is disabled and/or improperly configured.    \n\n" \
+                "    Choose \"Update\" to allow the console to change the following settings on your device to help enable INS output.    \n" \
+                "    Choose \"Close\" to ignore this recommendation and not update any device settings.    \n\n"
             # from objbrowser import browse
             # browse(confirm_prompt)
             confirm_prompt.view.content.content[0].content.append(
@@ -483,11 +473,11 @@ class SettingsView(HasTraits):
             callback=self._save_and_reset)
 
         confirm_prompt2.text = "\n\n" \
-                               "    In order for the \"Ins Output Mode\" setting to take effect, it is necessary to save the    \n" \
-                               "    current settings to device flash and then power cycle your device.    \n\n" \
-                               "    Choose \"OK\" to immediately save settings to device flash and send the software reset command.    \n" \
-                               "    The software reset will temporarily interrupt the console's connection to the device but it   \n" \
-                               "    will recover on its own.    \n\n"
+            "    In order for the \"Ins Output Mode\" setting to take effect, it is necessary to save the    \n" \
+            "    current settings to device flash and then power cycle your device.    \n\n" \
+            "    Choose \"OK\" to immediately save settings to device flash and send the software reset command.    \n" \
+            "    The software reset will temporarily interrupt the console's connection to the device but it   \n" \
+            "    will recover on its own.    \n\n"
 
         confirm_prompt2.run(block=False)
 
@@ -617,8 +607,8 @@ class SettingsView(HasTraits):
             actions=[prompt.close_button, prompt.ok_button],
             callback=self._settings_save_button_fired)
         confirm_prompt.text = "\n" \
-                                "  Settings import from file complete.  Click OK to save the settings  \n" \
-                                "  to the device's persistent storage.  \n"
+            "  Settings import from file complete.  Click OK to save the settings  \n" \
+            "  to the device's persistent storage.  \n"
         confirm_prompt.run(block=False)
 
     def _import_failure_section(self, section):
@@ -703,15 +693,15 @@ class SettingsView(HasTraits):
             actions=[prompt.close_button, prompt.auto_survey_button],
             callback=self.auto_survey_fn)
         confirm_prompt.text = "\n" \
-                              + "This will set the Surveyed Position section to the \n" \
-                              + "mean position of the last 1000 position solutions.\n \n" \
-                              + "The fields that will be auto-populated are: \n" \
-                              + "Surveyed Lat \n" \
-                              + "Surveyed Lon \n" \
-                              + "Surveyed Alt \n \n" \
-                              + "The surveyed position will be an approximate value. \n" \
-                              + "This may affect the relative accuracy of Piksi. \n \n" \
-                              + "Are you sure you want to auto-populate the Surveyed Position section?"
+            + "This will set the Surveyed Position section to the \n" \
+            + "mean position of the last 1000 position solutions.\n \n" \
+            + "The fields that will be auto-populated are: \n" \
+            + "Surveyed Lat \n" \
+            + "Surveyed Lon \n" \
+            + "Surveyed Alt \n \n" \
+            + "The surveyed position will be an approximate value. \n" \
+            + "This may affect the relative accuracy of Piksi. \n \n" \
+            + "Are you sure you want to auto-populate the Surveyed Position section?"
         confirm_prompt.run(block=False)
 
     def auto_survey_fn(self):
@@ -721,10 +711,17 @@ class SettingsView(HasTraits):
         self.settings['surveyed_position']['surveyed_lat'].value = lat_value
         self.settings['surveyed_position']['surveyed_lon'].value = lon_value
         self.settings['surveyed_position']['surveyed_alt'].value = alt_value
-        self.settings_display_setup(do_read_finished=False)
+        self.settings_display_setup(finish=False)
+
+    def finish_read():
+        for cb in self.read_finished_functions:
+            if self.gui_mode:
+                GUI.invoke_later(cb)
+            else:
+                cb()
 
     # Callbacks for receiving messages
-    def settings_display_setup(self, do_read_finished=True):
+    def settings_display_setup(self, finish=True):
         self.settings_list = []
         sections = sorted(self.settings.keys())
         for sec in sections:
@@ -737,13 +734,9 @@ class SettingsView(HasTraits):
             if this_section:
                 self.settings_list.append(SectionHeading(sec))
                 self.settings_list += this_section
-        # call read_finished_functions as needed
-        if do_read_finished:
-            for cb in self.read_finished_functions:
-                if self.gui_mode:
-                    GUI.invoke_later(cb)
-                else:
-                    cb()
+
+        if finish:
+            self.finish_read()
 
     def piksi_startup_callback(self, sbp_msg, **metadata):
         self._settings_read_all()
@@ -770,7 +763,6 @@ class SettingsView(HasTraits):
         self.expert = expert
         self.show_auto_survey = False
         self.gui_mode = gui_mode
-        self.enumindex = 0
         self.settings = {}
         self.link = link
         self.link.add_callback(self.piksi_startup_callback, SBP_MSG_STARTUP)
