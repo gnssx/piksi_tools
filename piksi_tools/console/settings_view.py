@@ -713,7 +713,7 @@ class SettingsView(HasTraits):
         self.settings['surveyed_position']['surveyed_alt'].value = alt_value
         self.settings_display_setup(finish=False)
 
-    def finish_read():
+    def finish_read(self):
         for cb in self.read_finished_functions:
             if self.gui_mode:
                 GUI.invoke_later(cb)
