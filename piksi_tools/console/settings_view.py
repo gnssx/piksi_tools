@@ -33,10 +33,12 @@ from pyface.api import FileDialog, OK
 from .settings_list import SettingsList
 from .utils import resource_filename
 
+# TODO: maybe something more elegant..
 import sys
-sys.path.insert(0, '/mnt/users/pasi/swiftnav/libsettings/python')
+sys.path.insert(0, 'lib/libsettings')
+#sys.path.insert(0, '/mnt/users/pasi/swiftnav/libsettings/python')
 
-from settings import Settings, settings_write_res_e
+from libsettings import Settings, settings_write_res_e
 
 if ETSConfig.toolkit != 'null':
     from enable.savage.trait_defs.ui.svg_button import SVGButton

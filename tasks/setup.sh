@@ -228,6 +228,18 @@ function install_python_deps_osx () {
     pip install PyInstaller==3.2.1
 }
 
+function install_local_libsettings () {
+    cd ..
+    mkdir -p lib
+    cd lib
+    rm -rf libsettings*
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/28bd416e75518ed63704184e7957e2d4b49d4dfc/python/libsettings-"$1".tar.gz
+    mkdir libsettings
+    tar -xzf libsettings-"$1".tar.gz -C libsettings --strip-components=1
+    cd libsettings
+    python setup.py build_ext --inplace
+    cd ../../tasks
+}
 
 
 ####################################################################
@@ -253,6 +265,7 @@ function run_all_platforms () {
         log_error "This script does not support this platform. Please contact dev@swiftnav.com."
         exit 1
     fi
+    install_local_libsettings 0.1.0
     log_info "Done!"
 }
 
