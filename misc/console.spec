@@ -24,7 +24,7 @@ else:
   icon = None
 
 # hack to prevent segfault on ubuntu 16.04
-binaries = []
+binaries = [('../lib/libsettings/libsettings.so', '.')]
 if is_linux:
   libs = ['libgtk-x11-2.0.so.0', 'libgio-2.0.so.0', 'libatk-1.0.so.0']
   binaries += [(findLibrary(l), '.') for l in libs]
