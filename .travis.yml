@@ -3,7 +3,7 @@ sudo: required
 
 
 python:
-  - "2.7"
+  - "2.7.12"
 
 git:
   depth: false
