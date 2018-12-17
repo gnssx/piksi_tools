@@ -229,16 +229,23 @@ function install_python_deps_osx () {
 }
 
 function install_local_libsettings () {
+    pwd
     cd ..
+    pwd
     mkdir -p lib
     cd lib
+    pwd
     rm -rf libsettings*
-    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/28bd416e75518ed63704184e7957e2d4b49d4dfc/python/libsettings-"$1".tar.gz
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/b01fac320be73e1f74223acf46d124a39a1ea86a/python/libsettings-"$1".tar.gz
     mkdir libsettings
     tar -xzf libsettings-"$1".tar.gz -C libsettings --strip-components=1
     cd libsettings
+    pwd
+    ls -la
     python setup.py build_ext --inplace
+    nm libsettings.so
     cd ../../tasks
+    pwd
 }
 
 
