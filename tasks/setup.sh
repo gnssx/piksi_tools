@@ -236,7 +236,7 @@ function install_local_libsettings () {
     cd lib
     pwd
     rm -rf libsettings*
-    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/b01fac320be73e1f74223acf46d124a39a1ea86a/python/libsettings-"$1".tar.gz
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/1930fd84c9098b21220dfbb1dd3ba3f914217109/python/libsettings-"$1".tar.gz
     mkdir libsettings
     tar -xzf libsettings-"$1".tar.gz -C libsettings --strip-components=1
     cd libsettings
