@@ -12,7 +12,8 @@ function InstallMissingHeaders () {
 
     Foreach ($include_dir in $include_dirs) {
     $urls = @(@("https://raw.githubusercontent.com/chemeris/msinttypes/master/stdint.h", "stdint.h"),
-             @("https://raw.githubusercontent.com/chemeris/msinttypes/master/inttypes.h", "inttypes.h"))
+             @("https://raw.githubusercontent.com/chemeris/msinttypes/master/inttypes.h", "inttypes.h"),
+             @("https://raw.githubusercontent.com/cdoenges/misclib/master/win32/stdbool.h", "stdbool.h"))
 
     Foreach ($i in $urls) {
         $url = $i[0]
