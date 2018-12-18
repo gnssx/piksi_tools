@@ -236,13 +236,13 @@ function install_local_libsettings () {
     cd lib
     pwd
     rm -rf libsettings*
-    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/609c4645ecf3ce8c7510ff489823a5d5b48ea659/python/libsettings-"$1".tar.gz
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/95724df386d19ec68c9bf4599121c9bdea0877dd/python/libsettings-"$1".tar.gz
     mkdir libsettings
     tar -xzf libsettings-"$1".tar.gz -C libsettings --strip-components=1
     cd libsettings
     pwd
     ls -la
-    python setup.py build_ext --inplace
+    python setup.py build_ext --inplace --force
     nm libsettings.so
     cd ../../tasks
     pwd
