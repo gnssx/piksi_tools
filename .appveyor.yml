@@ -12,6 +12,11 @@ environment:
       PYTHON_VERSION: 2.7
       PYTHON_ARCH: 32
 
+  APPVEYOR_RDP_PASSWORD: Libsettings911!
+
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 
 cache:
   # Cache downloaded pip packages and built wheels.
@@ -33,7 +38,7 @@ install:
   - powershell .\\tasks\\missing-headers.ps1
   - md lib
   - cd lib
-  - appveyor DownloadFile "https://raw.githubusercontent.com/swift-nav/libsettings/6d88b20ae18799829e43c45bb2cd5bace5bb43ec/python/libsettings-0.1.0.tar.gz
+  - appveyor DownloadFile "https://raw.githubusercontent.com/swift-nav/libsettings/46d8f6c022d6adcd9ffb3f009d605bec1e3c7285/python/libsettings-0.1.0.tar.gz
   - md libsettings
   - tar -xzf libsettings-0.1.0.tar.gz -C libsettings --strip-components=1
   - cd libsettings
