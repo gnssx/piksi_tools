@@ -34,21 +34,19 @@ install:
   - set PATH=C:\MinGW\bin;%PATH%
   - python --version
   # Upgrade to the latest pip.
-  - '%CMD_IN_ENV% python -m pip install -U pip setuptools wheel tox cython'
+  - '%CMD_IN_ENV% python -m pip install -U pip setuptools wheel tox'
   - powershell .\\tasks\\missing-headers.ps1
   - md lib
   - cd lib
-  - appveyor DownloadFile "https://raw.githubusercontent.com/swift-nav/libsettings/46d8f6c022d6adcd9ffb3f009d605bec1e3c7285/python/libsettings-0.1.0.tar.gz
+  - appveyor DownloadFile "https://raw.githubusercontent.com/swift-nav/libsettings/653f49e3fff51b14e367161e20ad59c406f9e4da/python/libsettings-0.1.0.tar.gz
   - md libsettings
   - tar -xzf libsettings-0.1.0.tar.gz -C libsettings --strip-components=1
   - cd libsettings
-  - python setup.py build_ext --inplace --force --compiler=mingw32
+  - python setup.py build_ext --inplace --compiler=mingw32
   - cd ../..
   - '%CMD_IN_ENV% python scripts\build_release.py'
 
 build: off
-
-test: off
 
 artifacts:
   - path: dist
