@@ -14,10 +14,10 @@ from __future__ import absolute_import, print_function
 import threading
 import time
 import configparser
-from enum import IntEnum, unique
 
 from pyface.api import GUI
 from sbp.piksi import MsgReset
+from sbp.settings import MsgSettingsSave
 from sbp.system import SBP_MSG_STARTUP
 from traits.api import (Bool, Color, Constant, Float, Font, HasTraits,
                         Instance, List, Property, Str, Undefined)
@@ -36,9 +36,9 @@ from .utils import resource_filename
 # TODO: maybe something more elegant..
 import sys
 sys.path.insert(0, 'lib/libsettings')
-#sys.path.insert(0, '/mnt/users/pasi/swiftnav/libsettings/python')
+# sys.path.insert(0, '/mnt/users/pasi/swiftnav/libsettings/python')
 
-from libsettings import Settings, settings_write_res_e
+from libsettings import Settings, settings_write_res_e   # noqa: E402
 
 if ETSConfig.toolkit != 'null':
     from enable.savage.trait_defs.ui.svg_button import SVGButton
@@ -615,15 +615,15 @@ class SettingsView(HasTraits):
 
     def _import_failure_section(self, section):
         print(("Unable to import settings from file."
-            " Setting section \"{0}\" has not been sent from device.").format(section))
+               " Setting section \"{0}\" has not been sent from device.").format(section))
 
     def _import_failure_not_found(self, section, name):
         print(("Unable to import settings from file. Setting \"{0}\" in section \"{1}\""
-            " has not been sent from device.").format(setting, name))
+               " has not been sent from device.").format(name, section))
 
     def _import_failure_write(self, section, name):
         print(("Unable to import settings from file. Writing setting \"{0}\" in section \"{1}\""
-            " failed.").format(setting, name))
+               " failed.").format(name, section))
 
     def _settings_import_from_file_button_fired(self):
         """Imports settings from INI file and sends settings write to device for each entry.
