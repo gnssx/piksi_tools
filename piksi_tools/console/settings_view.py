@@ -110,7 +110,6 @@ class Setting(SettingBase):
         self.settings = settings
         self.confirmed_set = True
         self.reverting = False
-        self.write_event = threading.Event()
 
         # flag on each setting to indicate a write failure if the revert thread has run on the setting
         self.write_failure = False
@@ -196,8 +195,6 @@ class Setting(SettingBase):
                 self.revert_to_prior_value(self.name, old, new, res)
 
             self.confirmed_set = True
-
-        self.write_event.set()
 
         # If we have toggled the Inertial Nav enable setting (currently "output mode")
         # we display some helpful hints for the user
@@ -646,9 +643,7 @@ class SettingsView(HasTraits):
             print('Unable to import settings to device.')
             return
 
-        # Iterate over each setting and set in the GUI.
-        # Use the same mechanism as GUI to do settings write to device
-
+        # Iterate over each setting
         for section, settings in parser.items():
 
             if not settings:
@@ -670,9 +665,7 @@ class SettingsView(HasTraits):
                 if this_setting.value == value:
                     continue
 
-                this_setting.write_event.clear()
-                this_setting.value = value
-                this_setting.write_event.wait()
+                this_setting._write_value(this_setting.value, value)
 
                 if this_setting.write_failure:
                     self._import_failure_write(section, setting)
