@@ -525,15 +525,7 @@ class SettingsView(HasTraits):
                 dict_setting.confirmed_set = True
                 continue
 
-            if setting_type is None:
-                # Plain old setting, no format information
-                self.settings[section][name] = Setting(
-                    name,
-                    section,
-                    value,
-                    ordering=idx,
-                    settings=self)
-            elif setting_type == 'enum':
+            if setting_type == 'enum':
                     enum_values = setting_format.split(',')
                     self.settings[section][name] = EnumSetting(
                         name,
@@ -543,7 +535,7 @@ class SettingsView(HasTraits):
                         ordering=idx,
                         settings=self)
             else:
-                # Unknown type, just treat is as a string
+                # No known format type
                 self.settings[section][name] = Setting(
                     name, section, value, settings=self, ordering=idx)
 
