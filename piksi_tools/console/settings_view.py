@@ -188,7 +188,7 @@ class Setting(SettingBase):
             if type(self.value) == unicode:
                 self.value = self.value.encode('ascii', 'replace')
             self.confirmed_set = False
-            res = self.settings.s_api.write(self.section, self.name, new)
+            res = self.settings.settings_api.write(self.section, self.name, new)
             if res == settings_write_res_e.SETTINGS_WR_OK:
                 self.value = new
             else:
@@ -487,18 +487,18 @@ class SettingsView(HasTraits):
 
     def _settings_read_all(self):
         self._settings_unconfirm_all()
-        threading.Thread(target=self._settings_read_all_thd).start()
+        threading.Thread(target=self._read_all_thread).start()
 
-    def _settings_read_all_thd(self):
-        slist = self.s_api.read_all()
+    def _read_all_thread(self):
+        settings_list = self.settings_api.read_all()
 
         idx = 0
 
-        for s in slist:
-            section = s['section']
-            name = s['name']
-            value = s['value']
-            fmt_type = s['fmt_type']
+        for setting in settings_list:
+            section = setting['section']
+            name = setting['name']
+            value = setting['value']
+            fmt_type = setting['fmt_type']
 
             idx += 1
 
@@ -512,14 +512,14 @@ class SettingsView(HasTraits):
                 self.settings[section] = {}
 
             # setting exists, we won't reinitilize it but rather update existing setting
-            dict_setting = self.settings[section].get(name, False)
-            if dict_setting:
-                dict_setting.value = value
-                dict_setting.ordering = idx
+            existing_setting = self.settings[section].get(name, False)
+            if existing_setting:
+                existing_setting.value = value
+                existing_setting.ordering = idx
                 if setting_type == 'enum':
                     enum_values = setting_format.split(',')
-                    dict_setting.enum_values = enum_values
-                dict_setting.confirmed_set = True
+                    existing_setting.enum_values = enum_values
+                existing_setting.confirmed_set = True
                 continue
 
             if setting_type == 'enum':
@@ -746,7 +746,7 @@ class SettingsView(HasTraits):
                  gui_mode=True,
                  skip=False):
         super(SettingsView, self).__init__()
-        self.s_api = Settings(1234, link)
+        self.settings_api = Settings(1234, link)
         self.expert = expert
         self.show_auto_survey = False
         self.gui_mode = gui_mode
