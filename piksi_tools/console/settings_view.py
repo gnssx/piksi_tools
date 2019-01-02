@@ -207,7 +207,7 @@ class Setting(SettingBase):
         if getattr(self, 'settings', None) is None:
             return
 
-        if self.reverting:
+        if self.reverting or old == new:
             return
 
         threading.Thread(target=self._write_value, args=(old, new)).start()
