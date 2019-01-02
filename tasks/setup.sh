@@ -229,16 +229,18 @@ function install_python_deps_osx () {
 }
 
 function install_local_libsettings () {
-    cd ..
+    cd ../piksi_tools
     mkdir -p lib
     cd lib
     rm -rf libsettings*
-    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/56ac4611e9fb148d7beaf469384247872f056f6d/python/libsettings-"$1".tar.gz
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/2dcb654d2f41f5507c64bfee5aab653ae49b204d/python/libsettings-"$1".tar.gz
     mkdir libsettings
+    touch __init__.py
+    touch libsettings/__init__.py
     tar -xzf libsettings-"$1".tar.gz -C libsettings --strip-components=1
     cd libsettings
     python setup.py build_ext --inplace --force
-    cd ../../tasks
+    cd ../../../tasks
 }
 
 
