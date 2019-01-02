@@ -233,7 +233,7 @@ function install_local_libsettings () {
     mkdir -p lib
     cd lib
     rm -rf libsettings*
-    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/2dcb654d2f41f5507c64bfee5aab653ae49b204d/python/libsettings-"$1".tar.gz
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/fd3a4328b63dac4896af2da0ee82d17b389c8ba9/python/libsettings-"$1".tar.gz
     mkdir libsettings
     touch __init__.py
     touch libsettings/__init__.py

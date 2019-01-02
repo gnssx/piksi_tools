@@ -11,6 +11,8 @@
 
 from __future__ import absolute_import, print_function
 
+from Queue import Queue
+
 import threading
 import time
 import configparser
@@ -39,8 +41,6 @@ if ETSConfig.toolkit != 'null':
     from enable.savage.trait_defs.ui.svg_button import SVGButton
 else:
     SVGButton = dict
-
-from Queue import Queue
 
 
 class WorkQueue():
