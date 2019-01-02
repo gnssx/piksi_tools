@@ -24,9 +24,9 @@ else:
   icon = None
 
 if is_win:
-  binaries = [('../lib/libsettings/libsettings.pyd', '.')]
+  binaries = [('../piksi_tools/lib/libsettings/libsettings.pyd', '.')]
 else:
-  binaries = [('../lib/libsettings/libsettings.so', '.')]
+  binaries = [('../piksi_tools/lib/libsettings/libsettings.so', '.')]
 
 # hack to prevent segfault on ubuntu 16.04
 if is_linux:
