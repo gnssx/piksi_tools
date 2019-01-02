@@ -40,6 +40,26 @@ if ETSConfig.toolkit != 'null':
 else:
     SVGButton = dict
 
+from Queue import Queue
+
+
+class WorkQueue():
+
+    def __init__(self):
+        self._work_queue = Queue()
+        self._worker = threading.Thread(target=self._work_thd)
+        self._worker.daemon = True
+        self._worker.start()
+
+    def put(self, func, *argv):
+        self._work_queue.put((func, argv))
+
+    def _work_thd(self):
+        while True:
+            (func, argv) = self._work_queue.get(block=True)
+            func(*argv)
+            self._work_queue.task_done()
+
 
 class SettingBase(HasTraits):
     name = Str()
@@ -210,7 +230,7 @@ class Setting(SettingBase):
         if self.reverting or old == new:
             return
 
-        threading.Thread(target=self._write_value, args=(old, new)).start()
+        self.settings.workqueue.put(self._write_value, old, new)
 
 
 class EnumSetting(Setting):
@@ -482,7 +502,7 @@ class SettingsView(HasTraits):
 
     def _settings_read_all(self):
         self._settings_unconfirm_all()
-        threading.Thread(target=self._read_all_thread).start()
+        self.workqueue.put(self._read_all_thread)
 
     def _read_all_thread(self):
         settings_list = self.settings_api.read_all()
@@ -742,6 +762,7 @@ class SettingsView(HasTraits):
                  skip=False):
         super(SettingsView, self).__init__()
         self.settings_api = Settings(1234, link)
+        self.workqueue = WorkQueue()
         self.expert = expert
         self.show_auto_survey = False
         self.gui_mode = gui_mode
