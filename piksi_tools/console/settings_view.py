@@ -761,7 +761,7 @@ class SettingsView(HasTraits):
                  gui_mode=True,
                  skip=False):
         super(SettingsView, self).__init__()
-        self.settings_api = Settings(1234, link)
+        self.settings_api = Settings(0x42, link)
         self.workqueue = WorkQueue()
         self.expert = expert
         self.show_auto_survey = False
