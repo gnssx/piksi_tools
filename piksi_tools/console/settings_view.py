@@ -35,7 +35,10 @@ from pyface.api import FileDialog, OK
 from .settings_list import SettingsList
 from .utils import resource_filename
 
-from ..lib.libsettings.libsettings import Settings, SettingsWriteResponseCodes
+try:
+    from ..lib.libsettings.libsettings import Settings, SettingsWriteResponseCodes
+except ImportError as error:
+    from libsettings import Settings, SettingsWriteResponseCodes
 
 if ETSConfig.toolkit != 'null':
     from enable.savage.trait_defs.ui.svg_button import SVGButton

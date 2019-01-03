@@ -24,7 +24,7 @@ else:
   icon = None
 
 if is_win:
-  binaries = [('../piksi_tools/lib/libsettings/libsettings.pyd', '.')]
+  binaries = [('../lib/libsettings/libsettings.pyd', '.')]
 else:
   binaries = [('../piksi_tools/lib/libsettings/libsettings.so', '.')]
 
