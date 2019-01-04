@@ -38,7 +38,7 @@ install:
   - powershell .\\tasks\\missing-headers.ps1
   - md lib
   - cd lib
-  - appveyor DownloadFile "https://raw.githubusercontent.com/swift-nav/libsettings/fd3a4328b63dac4896af2da0ee82d17b389c8ba9/python/libsettings-0.1.0.tar.gz"
+  - appveyor DownloadFile "https://raw.githubusercontent.com/swift-nav/libsettings/a4f5c14e167dbe140b319824aa814737abe50e45/python/libsettings-0.1.0.tar.gz"
   - md libsettings
   - tar -xzf libsettings-0.1.0.tar.gz -C libsettings --strip-components=1
   - cd libsettings
