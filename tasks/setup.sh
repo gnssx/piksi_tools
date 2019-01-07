@@ -233,7 +233,7 @@ function install_local_libsettings () {
     mkdir -p lib
     cd lib
     rm -rf libsettings*
-    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/a4f5c14e167dbe140b319824aa814737abe50e45/python/libsettings-"$1".tar.gz
+    curl -O https://raw.githubusercontent.com/swift-nav/libsettings/v"$1"/python/libsettings-"$1".tar.gz
     mkdir libsettings
     touch __init__.py
     touch libsettings/__init__.py
@@ -267,7 +267,7 @@ function run_all_platforms () {
         log_error "This script does not support this platform. Please contact dev@swiftnav.com."
         exit 1
     fi
-    install_local_libsettings 0.1.0
+    install_local_libsettings 0.1.3
     log_info "Done!"
 }
 
