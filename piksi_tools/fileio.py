@@ -33,7 +33,7 @@ from piksi_tools import serial_link
 from piksi_tools.utils import get_tcp_driver
 
 MAX_PAYLOAD_SIZE = 255
-SBP_FILEIO_WINDOW_SIZE = 4096
+SBP_FILEIO_WINDOW_SIZE = 1024
 
 # With SBP packets at 256 bytes, about 5 will fit a max network payload of 1460 bytes
 #   given 1500 as the MTU (maximum transmission unit) for Ethernet with IP overhead
