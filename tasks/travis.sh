@@ -5,6 +5,7 @@ if [[ $TESTENV ]]; then
   tox -e $TESTENV
 else
   tox
+  set -o errexit
   set -o pipefail
   rm -rf ~/home/.enthought
   PYTHONPATH=. python piksi_tools/console/console.py --file --error -p ./tests/data/piksi.bin & PID=$!
