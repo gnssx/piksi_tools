@@ -68,6 +68,7 @@ def plot_square_axes(plot, xnames, ynames):
     except:  # noqa
         import traceback
         traceback.print_exc()
+        raise
 
 
 class CodeFiltered(HasTraits):
