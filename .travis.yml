@@ -18,24 +18,28 @@ matrix:
   include:
    - os: linux
      language: python
+     before_install:
+      - "export DISPLAY=:0.0"
+      # set pixel depth https://docs.travis-ci.com/user/gui-and-headless-browsers/
+      - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_00.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :00 -ac -screen 0 1280x1024x16"
+      - sleep 3 # give xvfb some time to start
    - os: osx
      osx_image: Xcode 8.3.3
      language: generic
+     before_install:
+      - "export DISPLAY=:0.0"
+      - Xvfb :0.0 -screen 1 1280x1024x16 &
+      - sleep 3 # give xvfb some time to start
+      - rm -rf ~/home/.enthought
+      - export PATH="/usr/local/opt/python@2/libexec/bin:$PATH"
    - os: linux
      language: python
      env: TESTENV=flake8
 
-before_install:
-  - "export DISPLAY=:0.0"
-  # set pixel depth https://docs.travis-ci.com/user/gui-and-headless-browsers/
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_00.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :00 -ac -screen 0 1280x1024x16"
-  - sleep 3 # give xvfb some time to start
+before_script:
   - rm -rf ~/home/.enthought
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="/usr/local/opt/python@2/libexec/bin:$PATH"; fi
   - make deps 
   - pip list
-
-before_script:
   - "export PATH=/usr/local/bin/:./:$PATH"
 
 script:
