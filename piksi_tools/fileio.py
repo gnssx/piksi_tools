@@ -34,15 +34,14 @@ from piksi_tools import serial_link
 
 MAX_PAYLOAD_SIZE = 255
 SBP_FILEIO_WINDOW_SIZE = 100
-
 SBP_FILEIO_BATCH_SIZE = 1
-
 SBP_FILEIO_TIMEOUT = 3
 MAXIMUM_RETRIES = 20
 PROGRESS_CB_REDUCTION_FACTOR = 100
 TEXT_ENCODING = 'utf-8'  # used for printing out directory listings and files
-
 WAIT_SLEEP = 0.001
+CONFIG_REQ_RETRY_MS = 100
+CONFIG_REQ_TIMEOUT_MS = 1000
 
 
 class PendingRequest(object):
@@ -352,8 +351,8 @@ class SelectiveRepeater(object):
     def _config_received(self):
         if self._config_msg is not None:
             return True
-        config_timeout = self._config_send_time + Time(1, 0)
-        config_retry = self._config_retry_time + Time(0, 100)
+        config_timeout = self._config_send_time + Time(0, CONFIG_REQ_TIMEOUT_MS)
+        config_retry = self._config_retry_time + Time(0, CONFIG_REQ_RETRY_MS)
         now = Time.now()
         if now >= config_retry:
             self._link(MsgFileioConfigReq(sequence=self._config_seq))
